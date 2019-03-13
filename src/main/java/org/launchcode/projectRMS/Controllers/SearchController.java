@@ -1,6 +1,7 @@
 package org.launchcode.projectRMS.Controllers;
 
-import org.launchcode.projectRMS.models.AddIngredientsToRecipe;
+import org.launchcode.projectRMS.Comparators.RecipeComparator;
+import org.launchcode.projectRMS.models.IngredientAndQuantity;
 import org.launchcode.projectRMS.models.Recipe;
 import org.launchcode.projectRMS.models.data.CategoryDao;
 import org.launchcode.projectRMS.models.data.RecipeDao;
@@ -21,6 +22,8 @@ public class SearchController {
 
     @Autowired
     private RecipeDao recipeDao;
+
+    RecipeComparator recipeComparator = new RecipeComparator();
 
     @RequestMapping(value="")
     public String index(Model model){
@@ -46,11 +49,12 @@ public class SearchController {
                         newLists.add(list);
                     }
                 }
+                newLists.sort(recipeComparator);
                 model.addAttribute("recipes", newLists);
                 count = count + 1;
                 model.addAttribute("title", count + " item(s) found");
             }else{
-                for (AddIngredientsToRecipe i : recipe.getAddIngredientsToRecipes()){
+                for (IngredientAndQuantity i : recipe.getIngredientAndQuantities()){
                     if (i.getIngredient().getIngredientName().toLowerCase().contains(searchTerm.toLowerCase())){
                         int id = recipe.getId();
                         Recipe recipe1 = recipeDao.findOne(id);
@@ -60,6 +64,7 @@ public class SearchController {
                                 newLists.add(list);
                             }
                         }
+                        newLists.sort(recipeComparator);
                         model.addAttribute("recipes", newLists);
                         count = count + 1;
                         model.addAttribute("title", count + " item(s) found");

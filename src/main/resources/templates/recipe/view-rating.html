@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head th:replace="fragments :: head"></head>
+<body>
+<!--<nav th:replace="fragments :: navigation"></nav>-->
+<div class="container" style="background:#FFFFF0;">
+    <a th:href="@{'/recipe'}" method="get">
+        <button class="btn btn-default">Home</button>
+    </a>
+    <div class="header">
+        <center style="font-size:30px;" th:text="${title}">Default title</center>
+    </div>
+
+    <hr/>
+    <p th:unless="${recipe.rateCommentList.size()}">No Ratings</p>
+
+    <table class="table">
+        <tr>
+            <th>Rating</th>
+            <th>Comment</th>
+        </tr>
+
+        <tr th:each="ratings : ${recipe.rateCommentList}">
+        <tr th:each="rating : ${ratings}">
+            <td th:id="${rating.id}" th:text="${rating.rating}"></td>
+            <td th:text="${rating.comment}"></td>
+        </tr>
+        </tr>
+    </table>
+
+    <hr/>
+</div>
+
+</body>
+</html>

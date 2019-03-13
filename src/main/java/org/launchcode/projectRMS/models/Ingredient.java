@@ -13,12 +13,12 @@ public class Ingredient {
     private int id;
 
     @NotNull
-    @Size(min=3, max=100)
+    @Size(min=3, max=30)
     private String ingredientName;
 
     @OneToMany
     @JoinColumn(name = "ingredient_id")
-    private List<AddIngredientsToRecipe> addIngredientsToRecipes = new ArrayList<>();
+    private List<IngredientAndQuantity> ingredientAndQuantities = new ArrayList<>();
 
     public Ingredient(){}
 
@@ -38,7 +38,7 @@ public class Ingredient {
         this.ingredientName = ingredientName;
     }
 
-    public List<AddIngredientsToRecipe> getAddIngredientsToRecipes() {
-        return addIngredientsToRecipes;
+    public List<IngredientAndQuantity> getIngredientAndQuantities() {
+        return ingredientAndQuantities;
     }
 }

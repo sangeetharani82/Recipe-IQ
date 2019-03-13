@@ -14,7 +14,6 @@ public class Recipe {
     private int id;
 
     @NotNull
-    @Pattern(regexp = "[^0-9]*")
     @Size(min = 3, max = 100)
     private String recipeName;
 
@@ -26,13 +25,9 @@ public class Recipe {
 
     @NotNull
     private int servingSize;
-
     @NotNull
-    @Size(min = 3, message = "Prep time needed")
-    private String  prepTime;
-
+    private String prepTime;
     @NotNull
-    @Size(min = 3, message = "Cook time needed")
     private String cookTime;
 
     @NotNull
@@ -45,9 +40,10 @@ public class Recipe {
 
     @OneToMany
     @JoinColumn(name = "recipe_id")
-    private List<AddIngredientsToRecipe> addIngredientsToRecipes = new ArrayList<>();
+    private List<IngredientAndQuantity> ingredientAndQuantities;
 
-    public Recipe(String recipeName, int servingSize, String prepTime, String cookTime, String direction) {
+    public Recipe(String recipeName, int servingSize, String prepTime, String cookTime,
+                  String direction) {
         this();
         this.recipeName = recipeName;
         this.servingSize = servingSize;
@@ -123,8 +119,17 @@ public class Recipe {
         return rateCommentList;
     }
 
-    public List<AddIngredientsToRecipe> getAddIngredientsToRecipes() {
-        return addIngredientsToRecipes;
+    public void setRateCommentList(RateComment rating) {
+        rateCommentList.add(rating);
+    }
+
+    public List<IngredientAndQuantity> getIngredientAndQuantities() {
+        return ingredientAndQuantities;
+    }
+
+    public void setIngredientAndQuantityList(IngredientAndQuantity item) {
+
+        ingredientAndQuantities.add(item);
     }
 
 //    public User getUser() {

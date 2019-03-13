@@ -1,5 +1,6 @@
 package org.launchcode.projectRMS.Controllers;
 
+import org.launchcode.projectRMS.Comparators.IngredientComparator;
 import org.launchcode.projectRMS.models.Ingredient;
 import org.launchcode.projectRMS.models.data.IngredientDao;
 import org.launchcode.projectRMS.models.data.RecipeDao;
@@ -10,6 +11,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping("ingredient")
@@ -20,10 +22,17 @@ public class IngredientController {
     @Autowired
     private RecipeDao recipeDao;
 
+    IngredientComparator ingredientComparator = new IngredientComparator();
+
     @RequestMapping(value="")
     public String index(Model model){
+        ArrayList<Ingredient> lists = new ArrayList<>();
+        for (Ingredient ingredient: ingredientDao.findAll()){
+            lists.add(ingredient);
+        }
+        lists.sort(ingredientComparator);
         model.addAttribute("title", "Ingredients");
-        model.addAttribute("ingredients", ingredientDao.findAll());
+        model.addAttribute("ingredients", lists);
         return "ingredient/index";
     }
 
@@ -55,8 +64,7 @@ public class IngredientController {
     }
 
     @RequestMapping(value = "edit/{ingredientId}", method = RequestMethod.POST)
-    public String processEditForm(@PathVariable int ingredientId, @RequestParam String ingredientName,
-                                  Model model){
+    public String processEditForm(@PathVariable int ingredientId, @RequestParam String ingredientName, Model model){
         Ingredient edited = ingredientDao.findOne(ingredientId);
         edited.setIngredientName(ingredientName);
         ingredientDao.save(edited);
@@ -72,9 +80,4 @@ public class IngredientController {
         return "ingredient/message";
         //return "redirect:/ingredient";
     }
-//
-//    @RequestMapping(value = "/listPageable", method = RequestMethod.GET)
-//    Page<Ingredient> ingredientPageable(Pageable pageable) {
-//        return ingredientDao.findAll(pageable);
-//    }
 }

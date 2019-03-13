@@ -1,5 +1,6 @@
 package org.launchcode.projectRMS.Controllers;
 
+import org.launchcode.projectRMS.Comparators.CategoryComparator;
 import org.launchcode.projectRMS.models.Category;
 import org.launchcode.projectRMS.models.data.CategoryDao;
 import org.launchcode.projectRMS.models.data.RecipeDao;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping(value = "category")
@@ -24,9 +26,16 @@ public class CategoryController {
     @Autowired
     private RecipeDao recipeDao;
 
+    CategoryComparator categoryComparator = new CategoryComparator();
+
     @RequestMapping(value="")
     public String index(Model model){
-        model.addAttribute("categories", categoryDao.findAll());
+        ArrayList<Category> lists = new ArrayList<>();
+        for (Category category : categoryDao.findAll()){
+            lists.add(category);
+        }
+        lists.sort(categoryComparator);
+        model.addAttribute("categories", lists);
         model.addAttribute("title", "Categories");
         return "category/index";
     }
@@ -46,6 +55,7 @@ public class CategoryController {
             return "category/add";
         }
         categoryDao.save(category);
+
         model.addAttribute("message", "Successfully added!");
         return "category/message";
         //return "redirect:";

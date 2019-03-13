@@ -1,5 +1,6 @@
 package org.launchcode.projectRMS.Controllers;
 
+import org.launchcode.projectRMS.Comparators.CourseComparator;
 import org.launchcode.projectRMS.models.Course;
 import org.launchcode.projectRMS.models.data.CourseDao;
 import org.launchcode.projectRMS.models.data.RecipeDao;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping("course")
@@ -24,10 +26,17 @@ public class CourseController {
     @Autowired
     private RecipeDao recipeDao;
 
+    CourseComparator courseComparator = new CourseComparator();
+
     @RequestMapping(value="")
     public String index(Model model){
+        ArrayList<Course> lists = new ArrayList<>();
+        for (Course course : courseDao.findAll()){
+            lists.add(course);
+        }
+        lists.sort(courseComparator);
         model.addAttribute("title", "Courses");
-        model.addAttribute("courses", courseDao.findAll());
+        model.addAttribute("courses", lists);
         return "course/index";
     }
 
@@ -45,6 +54,7 @@ public class CourseController {
             return "course/add";
         }
         courseDao.save(course);
+
         model.addAttribute("message", "Successfully added!");
         return "course/message";
         //return "redirect:";

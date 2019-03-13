@@ -13,36 +13,33 @@
     <div class="alert alert-success">
         <strong th:text="${message}">Success!</strong>
     </div>
-
-    <hr/>
-
-    <p th:unless="${ingredientLists} and ${ingredientLists.size()}">No Ingredients added yet</p>
-    <a th:href="@{'/addIngredients/add/'}" th:object="${addIngredients}" method="get">
+    <a th:href="'/recipe/add-ingredient/' + ${recipe.id}">
         <button class="btn btn-success">Add Ingredients To Recipe</button>
     </a>
-    <table class="table table-striped">
+    <hr/>
+    <p th:unless="${recipe.ingredientAndQuantities.size()}">No Ingredients added yet</p>
+
+    <table class="table">
         <tr>
             <th>Ingredient</th>
             <th>Quantity</th>
-            <th>Remove</th>
-
+            <th>Delete</th>
         </tr>
-        <tr th:each = "list : ${ingredientLists}">
 
-        <tr>
-            <td th:text="${list.ingredient.ingredientName}"></td>
-            <td th:id="${list.id}"
-                th:text="${list.quantity}"></td>
+        <tr th:each="ingredientsAndQuantity : ${recipe.ingredientAndQuantities}">
+        <tr th:each="ingredientAndQuantity : ${ingredientsAndQuantity}">
+            <td th:id="${ingredientAndQuantity.id}" th:text="${ingredientAndQuantity.ingredient.ingredientName}"></td>
+            <td th:text="${ingredientAndQuantity.amount}"></td>
             <td>
-                <a th:href="@{'/addIngredients/delete/'+${list.id}}" th:object="${addIngredients}" method="post">
-                    <button type="submit" class="btn btn-danger" onClick="return confirm('sure?')">Delete</button>
+                <a th:href="@{'/recipe/remove/'+ ${ingredientAndQuantity.id}}" th:object="${recipe}" method="post">
+                    <button type="submit" class="btn btn-danger" onClick="return confirm('sure?')">Remove</button>
                 </a>
             </td>
         </tr>
         </tr>
     </table>
-    <hr/>
 
+    <hr/>
 </div>
 
 </body>

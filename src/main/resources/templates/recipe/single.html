@@ -4,18 +4,16 @@
 <body>
 <!--<nav th:replace="fragments :: navigation"></nav>-->
 <div class="container" style="background:#FFFFF0;">
-        <a th:href="@{'/recipe'}" method="get">
-            <button class="btn btn-default">Home</button>
-        </a>
+    <a th:href="@{'/recipe'}" method="get">
+        <button class="btn btn-default">Home</button>
+    </a>
+
     <div class="header">
         <center style="font-size:30px;" th:text="${title}">Default title</center>
     </div>
     <div class="btn-group">
-        <td  th:id="${recipe.id}"><a th:href="@{'/addIngredients/recipe?id=' + ${recipe.id}}">
-            <button type="button" class="btn btn-primary">Edit ingredients</button></a>
-            <a th:href="@{'/rate/add'}" th:object="${rate}" method="get">
-                <button type="button" class="btn btn-primary">Comment here</button>
-            </a>
+        <td  th:id="${recipe.id}"><a th:href="@{'/recipe/add-rating/' + ${recipe.id}}">
+            <button type="button" class="btn btn-info">Comment</button></a>
         </td>
     </div>
     <hr/>
@@ -52,7 +50,7 @@
                 <td th:text="${i.direction}"></td>
             </tr>
         </table>
-        <table class="table">
+        <table class="table table-striped">
             <tr>
                 <th>Ingredient</th>
                 <th>Quantity</th>
@@ -62,14 +60,14 @@
             <tr>
                 <td th:text="${list.ingredient.ingredientName}"></td>
                 <td th:id="${list.id}"
-                    th:text="${list.quantity}"></td>
+                    th:text="${list.amount}"></td>
             </tr>
             </tr>
         </table>
         <h5></h5>
         <hr />
     </div>
-<p th:text="${user}"></p>
+
 </div>
 
 </body>
