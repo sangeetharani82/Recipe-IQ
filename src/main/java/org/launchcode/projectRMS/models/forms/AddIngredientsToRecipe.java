@@ -4,28 +4,25 @@ import org.launchcode.projectRMS.models.Ingredient;
 import org.launchcode.projectRMS.models.Recipe;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
-public class AddIngredientAndQuantityToRecipeForm {
+public class AddIngredientsToRecipe {
 
     private Recipe recipe;
-
     private Iterable<Ingredient> ingredients;
 
     @NotNull
     private int recipeId;
 
     @NotNull
-    private int ingredientId;
+    private List<Integer> ingredientIds;
 
-    @NotNull
-    private String amount;
-
-    public AddIngredientAndQuantityToRecipeForm() {
-    }
-
-    public AddIngredientAndQuantityToRecipeForm(Recipe recipe, Iterable<Ingredient> ingredients) {
+    public AddIngredientsToRecipe(Recipe recipe, Iterable<Ingredient> ingredients) {
         this.recipe = recipe;
         this.ingredients = ingredients;
+    }
+
+    public AddIngredientsToRecipe() {
     }
 
     public Recipe getRecipe() {
@@ -44,19 +41,11 @@ public class AddIngredientAndQuantityToRecipeForm {
         this.recipeId = recipeId;
     }
 
-    public int getIngredientId() {
-        return ingredientId;
+    public List<Integer> getIngredientIds() {
+        return ingredientIds;
     }
 
-    public void setIngredientId(int ingredientId) {
-        this.ingredientId = ingredientId;
-    }
-
-    public String getAmount() {
-        return amount;
-    }
-
-    public void setAmount(String amount) {
-        this.amount = amount;
+    public void setIngredientIds(List<Integer> ingredientIds) {
+        this.ingredientIds = ingredientIds;
     }
 }

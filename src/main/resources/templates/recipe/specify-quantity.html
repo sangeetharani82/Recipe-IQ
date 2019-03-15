@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head th:replace="fragments :: head"></head>
+<body>
+
+<!--<nav th:replace="fragments :: navigation"></nav>-->
+<div class="container" style="background:#FFFFF0;">
+    <a th:href="@{'/recipe'}" method="get">
+        <button class="btn btn-default">Home</button>
+    </a>
+    <div class="header">
+        <center style="font-size:30px;" th:text="${#strings.capitalize(title)}">Default title</center>
+    </div>
+
+    <hr/>
+    <form method="post" style="max-width:500px;" th:object="${form}" action="/recipe/specify-quantity">
+        <div class="form-group">
+            <label th:for="amount">Quantity</label>
+            <input type="text" class="form-control" th:field="*{amount}" placeholder="Quantity" />
+            <span th:errors="*{amount}" class="error"></span>
+            <input type="hidden" name="ingredientId" th:value="*{ingredient.id}" />
+            <input type="hidden" name="recipeId" th:value="*{recipe.id}" />
+        </div>
+        <button type="submit" class="btn btn-success">Specify</button>
+    </form>
+    <hr/>
+</div>
+
+</body>
+</html>

@@ -8,37 +8,60 @@
         <button class="btn btn-default">Home</button>
     </a>
     <div class="header">
-        <center style="font-size:30px;" th:text="${title}">Default title</center>
+        <center style="font-size:30px;" th:text="${#strings.capitalize(title)}">Default title</center>
     </div>
     <div class="alert alert-success">
         <strong th:text="${message}">Success!</strong>
     </div>
-    <a th:href="'/recipe/add-ingredient/' + ${recipe.id}">
+    <a th:href="'/recipe/add-ingredients/' + ${recipe.id}">
         <button class="btn btn-success">Add Ingredients To Recipe</button>
     </a>
+
+    <a th:href="@{'/ingredient/add'}" th:object="${ingredient}" method="get">
+        <button class="btn btn-success">Create a new Ingredient</button>
+    </a>
     <hr/>
-    <p th:unless="${recipe.ingredientAndQuantities.size()}">No Ingredients added yet</p>
+    <p th:unless="${recipe.ingredients.size()}">No Ingredients added yet</p>
 
     <table class="table">
+        <thead>
         <tr>
             <th>Ingredient</th>
             <th>Quantity</th>
             <th>Delete</th>
         </tr>
-
-        <tr th:each="ingredientsAndQuantity : ${recipe.ingredientAndQuantities}">
-        <tr th:each="ingredientAndQuantity : ${ingredientsAndQuantity}">
-            <td th:id="${ingredientAndQuantity.id}" th:text="${ingredientAndQuantity.ingredient.ingredientName}"></td>
-            <td th:text="${ingredientAndQuantity.amount}"></td>
+        </thead>
+        <tr th:each = "quantities : ${recipe.quantities}">
+        <tr th:each="quantity : ${quantities}">
+            <td th:text="${#strings.capitalize(quantity.ingredient.ingredientName)}"></td>
+            <td th:id="${quantity.id}" th:text="${quantity.amount}"></td>
             <td>
-                <a th:href="@{'/recipe/remove/'+ ${ingredientAndQuantity.id}}" th:object="${recipe}" method="post">
+                <a th:href="@{'/recipe/remove/'+ ${quantity.id}}" th:object="${recipe}" method="post">
                     <button type="submit" class="btn btn-danger" onClick="return confirm('sure?')">Remove</button>
                 </a>
             </td>
         </tr>
         </tr>
-    </table>
+        <p th:if="${recipe.quantities.size() != recipe.ingredients.size()}">
+            <thead>
+            <tr>
+                <th>Ingredient</th>
+                <th>Specify the quantity</th>
+            </tr>
+            </thead>
 
+            <tr th:each = "ingredients : ${recipe.ingredients}">
+            <tr th:each="ingredient : ${ingredients}">
+                <td th:id="${ingredient.id}" th:text="${#strings.capitalize(ingredient.ingredientName)}"></td>
+                <td>
+                    <a th:href="@{'/recipe/specify-quantity/'}+${recipe.id}+'/'+${ingredient.id}" th:object="${form}" method="get">
+                        <button class="btn btn-success">Specify Quantity</button>
+                    </a>
+                </td>
+            </tr>
+            </tr>
+        </p>
+    </table>
     <hr/>
 </div>
 

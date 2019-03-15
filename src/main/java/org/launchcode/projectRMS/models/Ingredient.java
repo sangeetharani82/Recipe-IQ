@@ -3,7 +3,6 @@ package org.launchcode.projectRMS.models;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -16,9 +15,12 @@ public class Ingredient {
     @Size(min=3, max=30)
     private String ingredientName;
 
+    @ManyToMany(mappedBy = "ingredients")
+    private List<Recipe> recipes;
+
     @OneToMany
     @JoinColumn(name = "ingredient_id")
-    private List<IngredientAndQuantity> ingredientAndQuantities = new ArrayList<>();
+    private List<Quantity> quantities;
 
     public Ingredient(){}
 
@@ -38,7 +40,11 @@ public class Ingredient {
         this.ingredientName = ingredientName;
     }
 
-    public List<IngredientAndQuantity> getIngredientAndQuantities() {
-        return ingredientAndQuantities;
+    public List<Quantity> getQuantities() {
+        return quantities;
+    }
+
+    public void setQuantities(Quantity quantity){
+        quantities.add(quantity);
     }
 }

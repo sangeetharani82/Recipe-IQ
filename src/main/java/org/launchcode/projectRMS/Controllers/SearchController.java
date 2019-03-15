@@ -1,7 +1,8 @@
 package org.launchcode.projectRMS.Controllers;
 
 import org.launchcode.projectRMS.Comparators.RecipeComparator;
-import org.launchcode.projectRMS.models.IngredientAndQuantity;
+import org.launchcode.projectRMS.models.Ingredient;
+import org.launchcode.projectRMS.models.Quantity;
 import org.launchcode.projectRMS.models.Recipe;
 import org.launchcode.projectRMS.models.data.CategoryDao;
 import org.launchcode.projectRMS.models.data.RecipeDao;
@@ -54,8 +55,8 @@ public class SearchController {
                 count = count + 1;
                 model.addAttribute("title", count + " item(s) found");
             }else{
-                for (IngredientAndQuantity i : recipe.getIngredientAndQuantities()){
-                    if (i.getIngredient().getIngredientName().toLowerCase().contains(searchTerm.toLowerCase())){
+                for (Ingredient i : recipe.getIngredients()){
+                    if (i.getIngredientName().toLowerCase().contains(searchTerm.toLowerCase())){
                         int id = recipe.getId();
                         Recipe recipe1 = recipeDao.findOne(id);
                         lists.add(recipe1);

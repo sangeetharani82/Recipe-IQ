@@ -8,7 +8,7 @@
         <button class="btn btn-default">Home</button>
     </a>
     <div class="header">
-        <center style="font-size:30px;" th:text="${title}">Default title</center>
+        <center style="font-size:30px;" th:text="${#strings.capitalize(title)}">Default title</center>
     </div>
     <a th:href="@{'/ingredient/add'}" th:object="${ingredient}" method="get">
         <button class="btn btn-success">Add an Ingredient</button>
@@ -26,7 +26,7 @@
         <tr th:each="ingredient : ${ingredients}">
             <tr>
                 <td th:id = "${ingredient.id}" ><a th:href="@{'/ingredient/edit/' + ${ingredient.id}}"
-                                                   th:text="${ingredient.ingredientName}"></a></td>
+                                                   th:text="${#strings.capitalize(ingredient.ingredientName)}"></a></td>
                 <td>
                     <a th:href="@{'/ingredient/delete/'+${ingredient.id}}" th:object="${ingredient}" method="post">
                         <button type="submit" class="btn btn-danger" onClick="return confirm('sure?')">Delete</button>

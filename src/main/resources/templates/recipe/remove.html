@@ -7,13 +7,13 @@
 
 <div class="content">
     <div class="header">
-        <h2 th:text="${title}">Default title</h2>
+        <h2 th:text="${#strings.capitalize(title)}">Default title</h2>
     </div>
     <form method="post">
         <div class="row">
             <div th:each="recipe : ${recipes}" class="checkbox">
                 <input type="checkbox" name="recipeIds" th:value="${recipe.id}" th:id="${recipe.id}"/>
-                <label th:for="${recipe.id}" th:text="${recipe.recipeName}"></label>
+                <label th:for="${recipe.id}" th:text="${#strings.capitalize(recipe.recipeName)}"></label>
                 <br />
             </div>
             <div class="row">

@@ -2,7 +2,6 @@ package org.launchcode.projectRMS.models;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,9 +37,12 @@ public class Recipe {
     @JoinColumn(name = "recipe_id")
     private List<RateComment> rateCommentList = new ArrayList<>();
 
+    @ManyToMany
+    private List<Ingredient> ingredients;
+
     @OneToMany
     @JoinColumn(name = "recipe_id")
-    private List<IngredientAndQuantity> ingredientAndQuantities;
+    private List<Quantity> quantities;
 
     public Recipe(String recipeName, int servingSize, String prepTime, String cookTime,
                   String direction) {
@@ -123,16 +125,37 @@ public class Recipe {
         rateCommentList.add(rating);
     }
 
-    public List<IngredientAndQuantity> getIngredientAndQuantities() {
-        return ingredientAndQuantities;
+    public List<Ingredient> getIngredients() {
+        return ingredients;
+    }
+    public void addIngredients(List<Ingredient> ingredientList){
+        for (Ingredient ingredient : ingredientList){
+            ingredients.add(ingredient);
+        }
+    }
+    public void deleteIngredients(List<Ingredient> ingredientList){
+        for (Ingredient ingredient : ingredientList){
+            ingredients.remove(ingredient);
+        }
+    }
+    public void removeIngredient(Ingredient ingredient){
+        ingredients.remove(ingredient);
     }
 
-    public void setIngredientAndQuantityList(IngredientAndQuantity item) {
-
-        ingredientAndQuantities.add(item);
+    public List<Quantity> getQuantities() {
+        return quantities;
     }
 
-//    public User getUser() {
+    public void addQuantities(Quantity quantity){
+        quantities.add(quantity);
+    }
+
+    public void removeQuantities(List<Quantity> quantityList){
+        for (Quantity quantity : quantityList){
+            quantityList.remove(quantity);
+        }
+    }
+    //    public User getUser() {
 //        return user;
 //    }
 //

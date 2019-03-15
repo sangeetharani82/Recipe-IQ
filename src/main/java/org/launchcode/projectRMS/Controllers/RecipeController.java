@@ -7,7 +7,8 @@ import org.launchcode.projectRMS.Comparators.IngredientComparator;
 import org.launchcode.projectRMS.Comparators.RecipeComparator;
 import org.launchcode.projectRMS.models.*;
 import org.launchcode.projectRMS.models.data.*;
-import org.launchcode.projectRMS.models.forms.AddIngredientAndQuantityToRecipeForm;
+import org.launchcode.projectRMS.models.forms.AddIngredientsToRecipe;
+import org.launchcode.projectRMS.models.forms.AddQuantitiesToRecipe;
 import org.launchcode.projectRMS.models.forms.AddRateCommentToRecipeForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -33,7 +34,7 @@ public class RecipeController {
     IngredientDao ingredientDao;
 
     @Autowired
-    IngredientAndQuantityDao ingredientAndQuantityDao;
+    QuantityDao quantityDao;
 
     @Autowired
     RateCommentDao rateCommentDao;
@@ -118,43 +119,92 @@ public class RecipeController {
     @RequestMapping(value="view/{id}", method = RequestMethod.GET)
     public String view(@PathVariable int id, Model model){
         Recipe recipe = recipeDao.findOne(id);
-        model.addAttribute("title", "Ingredients needed for " + recipe.getRecipeName());
+        List<Quantity> quantities = new ArrayList<>();
+        for (Ingredient ingredient : recipe.getIngredients()){
+            for (Quantity quantity : ingredient.getQuantities()){
+                quantities.add(quantity);
+            }
+        }
+        model.addAttribute("title", recipe.getRecipeName());
         model.addAttribute("recipe", recipe);
+        model.addAttribute("quantities", quantities);
         model.addAttribute("message", "Added successfully!");
         return "recipe/view";
     }
 
-    @RequestMapping(value = "add-ingredient/{recipeId}", method = RequestMethod.GET)
-    public String displayAddIngredientAndQuantityForm(@PathVariable int recipeId, Model model){
-        Recipe recipe = recipeDao.findOne(recipeId);
-        AddIngredientAndQuantityToRecipeForm form = new AddIngredientAndQuantityToRecipeForm(recipe, ingredientDao.findAll());
-        model.addAttribute("title", "Add Ingredient and Quantity to "+recipe.getRecipeName());
-        model.addAttribute("form", form);
+    @RequestMapping(value="add-ingredients/{recipeId}", method = RequestMethod.GET)
+    public String displayAddIngredients(@PathVariable int recipeId, Model model){
 
+        Recipe recipe = recipeDao.findOne(recipeId);
+        AddIngredientsToRecipe form = new AddIngredientsToRecipe(recipe, ingredientDao.findAll());
         ArrayList<Ingredient> ingredients = new ArrayList<>();
         for (Ingredient ingredient : ingredientDao.findAll()){
             ingredients.add(ingredient);
         }
         ingredients.sort(ingredientComparator);
         model.addAttribute("ingredients", ingredients);
-        return "recipe/add-ingredient";
+        model.addAttribute("title", "Add Ingredients to " + recipe.getRecipeName());
+        model.addAttribute("form", form);
+        return "recipe/add-ingredients";
     }
 
-    @RequestMapping(value = "add-ingredient", method = RequestMethod.POST)
-    public String processAddIngredientAndQuantityForm(Model model, @ModelAttribute @Valid AddIngredientAndQuantityToRecipeForm form,
-                                                      Errors errors){
+    @RequestMapping(value="add-ingredients", method = RequestMethod.POST)
+    public String processAddIngredients(@ModelAttribute @Valid AddIngredientsToRecipe form, Errors errors,
+                                        Model model){
         if (errors.hasErrors()){
             model.addAttribute("form", form);
-            return "recipe/add-ingredient";
+            return "recipe/add-ingredients";
         }
+        List<Ingredient> recipeIngredients = new ArrayList<>();
+        Recipe theRecipe = recipeDao.findOne(form.getRecipeId());
+        for (int id : form.getIngredientIds()){
+            Ingredient theIngredient = ingredientDao.findOne(id);
+            recipeIngredients.add(theIngredient);
+        }
+        theRecipe.addIngredients(recipeIngredients);
+        recipeDao.save(theRecipe);
+        return "redirect:view/" + theRecipe.getId();
+    }
 
+    @RequestMapping(value = "specify-quantity/{recipeId}/{ingredientId}", method = RequestMethod.GET)
+    public String displaySpecifyQuantityForm(@PathVariable int recipeId, @PathVariable int ingredientId, Model model){
+        String quantity = "";
+        Ingredient ingredient = ingredientDao.findOne(ingredientId);
+        Recipe recipe = recipeDao.findOne(recipeId);
+        AddQuantitiesToRecipe form = new AddQuantitiesToRecipe(recipe, ingredient, quantity);
+        model.addAttribute("title", "Specify quantity for " + ingredient.getIngredientName());
+        model.addAttribute("form", form);
+        return "recipe/specify-quantity";
+    }
+
+    @RequestMapping(value="specify-quantity", method = RequestMethod.POST)
+    public String processSpecifyQuantityForm(@ModelAttribute @Valid AddQuantitiesToRecipe form, Errors errors,
+                                             Model model){
+        if (errors.hasErrors()){
+            model.addAttribute("form", form);
+            return "recipe/specify-quantity";
+        }
+        Ingredient ingredient = ingredientDao.findOne(form.getIngredientId());
         Recipe recipe = recipeDao.findOne(form.getRecipeId());
-        Ingredient theIngredient = ingredientDao.findOne(form.getIngredientId());
-        IngredientAndQuantity ingredientAndQuantity = new IngredientAndQuantity(recipe, theIngredient, form.getAmount());
-        recipe.setIngredientAndQuantityList(ingredientAndQuantity);
-        ingredientAndQuantityDao.save(ingredientAndQuantity);
+        Quantity quantity = new Quantity(recipe, ingredient, form.getAmount());
+        ingredient.setQuantities(quantity);
+        quantityDao.save(quantity);
+        recipe.addQuantities(quantity);
         recipeDao.save(recipe);
-        return "redirect:view/"+ recipe.getId();
+        ingredientDao.save(ingredient);
+        return "redirect:view/" + recipe.getId();
+    }
+
+    //delete the ingredient and quantity from the recipe
+    @RequestMapping(value = "remove/{quantityId}")
+    public String removeIngredientAndQuantity(@PathVariable int quantityId, Model model){
+        Quantity quantity = quantityDao.findOne(quantityId);
+        quantityDao.delete(quantity);
+        Recipe recipe = recipeDao.findOne(quantity.getRecipe().getId());
+        recipe.removeIngredient(quantity.getIngredient());
+        recipeDao.save(recipe);
+        model.addAttribute("message", "Ingredient and Quantity removed successfully");
+        return "recipe/message";
     }
 
     //view single recipe
@@ -166,7 +216,8 @@ public class RecipeController {
         model.addAttribute("category", recipe.getCategory());
         model.addAttribute("recipe", recipe);
         model.addAttribute("title", recipe.getRecipeName());
-        model.addAttribute("ingredientLists", recipe.getIngredientAndQuantities());
+        model.addAttribute("ingredients", recipe.getIngredients());
+        model.addAttribute("quantities", recipe.getQuantities());
         return "recipe/single";
     }
 
@@ -189,21 +240,14 @@ public class RecipeController {
         return "recipe/list-under";
     }
 
-    // delete each recipe instantly
-    @RequestMapping(value = "delete/{recipeId}")
+    // delete each recipe
+    @RequestMapping(value = "delete/{recipeId}", method = RequestMethod.POST)
     public String delete(@PathVariable int recipeId, Model model){
+        Recipe recipe = recipeDao.findOne(recipeId);
+        recipe.deleteIngredients(recipe.getIngredients());
+        recipe.removeQuantities(recipe.getQuantities());
         recipeDao.delete(recipeId);
         model.addAttribute("message", "Recipe deleted successfully!");
-        return "recipe/message";
-        //return "redirect:/recipe";
-    }
-
-    //delete the ingredient and quantity from the recipe
-    @RequestMapping(value = "remove/{ingredientAndQuantityId}")
-    public String removeIngredientAndQuantity(@PathVariable int ingredientAndQuantityId, Model model){
-        IngredientAndQuantity ingredientAndQuantity = ingredientAndQuantityDao.findOne(ingredientAndQuantityId);
-        ingredientAndQuantityDao.delete(ingredientAndQuantity);
-        model.addAttribute("message", "Ingredient and Quantity removed successfully");
         return "recipe/message";
     }
 
@@ -254,8 +298,7 @@ public class RecipeController {
         model.addAttribute("message", "Successfully edited!");
         model.addAttribute("recipe", edited);
         model.addAttribute("title", "Ingredients needed for " + edited.getRecipeName());
-        model.addAttribute("ingredientLists", edited.getIngredientAndQuantities());
-        return "recipe/view";
+        return "redirect:/recipe/view/" + edited.getId();
     }
 
     @RequestMapping(value = "add-rating/{recipeId}", method = RequestMethod.GET)

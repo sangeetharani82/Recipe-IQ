@@ -5,9 +5,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
-public class IngredientAndQuantity {
+public class Quantity {
 
     @Id
     @GeneratedValue
@@ -22,15 +23,16 @@ public class IngredientAndQuantity {
     private Ingredient ingredient;
 
     @NotNull
+    @Size(min = 1, message = "Specify the quantity")
     private String amount;
 
-    public IngredientAndQuantity(Recipe recipe, Ingredient ingredient, String amount) {
+    public Quantity(Recipe recipe, Ingredient ingredient, String amount) {
         this.recipe = recipe;
         this.ingredient = ingredient;
         this.amount = amount;
     }
 
-    public IngredientAndQuantity() {
+    public Quantity() {
     }
 
     public int getId() {
