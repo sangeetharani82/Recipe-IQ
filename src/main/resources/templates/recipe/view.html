@@ -54,6 +54,11 @@
             <tr th:each="ingredient : ${ingredients}">
                 <td th:id="${ingredient.id}" th:text="${#strings.capitalize(ingredient.ingredientName)}"></td>
                 <td>
+                    <a th:href="@{'/recipe/del/'+${recipe.id}+'/'+${ingredient.id}}" th:object="${recipe}" method="post">
+                        <button type="submit" class="btn btn-danger" onClick="return confirm('sure?')">Remove</button>
+                    </a>
+                </td>
+                <td>
                     <a th:href="@{'/recipe/specify-quantity/'}+${recipe.id}+'/'+${ingredient.id}" th:object="${form}" method="get">
                         <button class="btn btn-success">Specify Quantity</button>
                     </a>

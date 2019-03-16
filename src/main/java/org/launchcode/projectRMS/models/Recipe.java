@@ -128,6 +128,7 @@ public class Recipe {
     public List<Ingredient> getIngredients() {
         return ingredients;
     }
+
     public void addIngredients(List<Ingredient> ingredientList){
         for (Ingredient ingredient : ingredientList){
             ingredients.add(ingredient);
@@ -155,6 +156,7 @@ public class Recipe {
             quantityList.remove(quantity);
         }
     }
+
     //    public User getUser() {
 //        return user;
 //    }
