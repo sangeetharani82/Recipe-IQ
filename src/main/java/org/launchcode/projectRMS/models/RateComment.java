@@ -56,4 +56,5 @@ public class RateComment {
     public void setRecipe(Recipe recipe) {
         this.recipe = recipe;
     }
+
 }

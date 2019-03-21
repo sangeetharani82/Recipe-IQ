@@ -166,6 +166,17 @@ public class RecipeController {
         return "redirect:view/" + theRecipe.getId();
     }
 
+    //delete the ingredient from the recipe
+    @RequestMapping(value = "del/{recipeId}/{ingredientId}")
+    public String removeIngredient(@PathVariable int recipeId, @PathVariable int ingredientId, Model model){
+        Ingredient ingredient = ingredientDao.findOne(ingredientId);
+        Recipe recipe = recipeDao.findOne(recipeId);
+        recipe.removeIngredient(ingredient);
+        recipeDao.save(recipe);
+        model.addAttribute("message", "Ingredient and Quantity removed successfully");
+        return "redirect:/recipe/view/" + recipe.getId();
+    }
+
     @RequestMapping(value = "specify-quantity/{recipeId}/{ingredientId}", method = RequestMethod.GET)
     public String displaySpecifyQuantityForm(@PathVariable int recipeId, @PathVariable int ingredientId, Model model){
         String quantity = "";
@@ -196,23 +207,14 @@ public class RecipeController {
     }
 
     //delete the ingredient and quantity from the recipe
-    @RequestMapping(value = "remove/{quantityId}")
-    public String removeIngredientAndQuantity(@PathVariable int quantityId, Model model){
-        Quantity quantity = quantityDao.findOne(quantityId);
-        quantityDao.delete(quantity);
-        Recipe recipe = recipeDao.findOne(quantity.getRecipe().getId());
-        recipe.removeIngredient(quantity.getIngredient());
-        recipeDao.save(recipe);
-        model.addAttribute("message", "Ingredient and Quantity removed successfully");
-        return "redirect:/recipe/view/" + recipe.getId();
-    }
-
-    //delete the ingredient from the recipe
-    @RequestMapping(value = "del/{recipeId}/{ingredientId}")
-    public String removeIngredient(@PathVariable int recipeId, @PathVariable int ingredientId, Model model){
-        Ingredient ingredient = ingredientDao.findOne(ingredientId);
+    @RequestMapping(value = "remove/{recipeId}/{quantityId}")
+    public String removeIngredientAndQuantity(@PathVariable int recipeId,
+                                              @PathVariable int quantityId, Model model){
         Recipe recipe = recipeDao.findOne(recipeId);
+        Quantity quantity = quantityDao.findOne(quantityId);
+        Ingredient ingredient = ingredientDao.findOne(quantity.getIngredient().getId());
         recipe.removeIngredient(ingredient);
+        quantityDao.delete(quantity);
         recipeDao.save(recipe);
         model.addAttribute("message", "Ingredient and Quantity removed successfully");
         return "redirect:/recipe/view/" + recipe.getId();
@@ -252,11 +254,12 @@ public class RecipeController {
     }
 
     // delete each recipe
-    @RequestMapping(value = "delete/{recipeId}", method = RequestMethod.POST)
+    @RequestMapping(value = "delete/{recipeId}")
     public String delete(@PathVariable int recipeId, Model model){
         Recipe recipe = recipeDao.findOne(recipeId);
+        rateCommentDao.delete(recipe.getRateCommentList());
+        quantityDao.delete(recipe.getQuantities());
         recipe.deleteIngredients(recipe.getIngredients());
-        recipe.removeQuantities(recipe.getQuantities());
         recipeDao.delete(recipeId);
         model.addAttribute("message", "Recipe deleted successfully!");
         return "recipe/message";

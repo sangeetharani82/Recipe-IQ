@@ -43,7 +43,7 @@
                 </td>
                 <td>
                     <a th:href="@{'/recipe/delete/'+${recipe.id}}" th:object="${recipe}" method="post">
-                        <button type="button" class="btn btn-danger" onClick="return confirm('Are you sure?')">Delete</button>
+                        <button type="submit" class="btn btn-danger" onClick="return confirm('Are you sure?')">Delete</button>
                     </a>
                 </td>
                 <td  th:id="${recipe.id}"><a th:href="@{'/recipe/view-rating/' + ${recipe.id}}">

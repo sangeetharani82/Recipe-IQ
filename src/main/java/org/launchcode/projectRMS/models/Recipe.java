@@ -135,9 +135,7 @@ public class Recipe {
         }
     }
     public void deleteIngredients(List<Ingredient> ingredientList){
-        for (Ingredient ingredient : ingredientList){
-            ingredients.remove(ingredient);
-        }
+        ingredients.removeAll(ingredientList);
     }
     public void removeIngredient(Ingredient ingredient){
         ingredients.remove(ingredient);
@@ -149,12 +147,6 @@ public class Recipe {
 
     public void addQuantities(Quantity quantity){
         quantities.add(quantity);
-    }
-
-    public void removeQuantities(List<Quantity> quantityList){
-        for (Quantity quantity : quantityList){
-            quantityList.remove(quantity);
-        }
     }
 
     //    public User getUser() {

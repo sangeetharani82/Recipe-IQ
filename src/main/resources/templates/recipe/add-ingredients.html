@@ -11,17 +11,20 @@
     <div class="header">
         <center style="font-size:30px;" th:text="${#strings.capitalize(title)}">Default title</center>
     </div>
+    <a th:href="@{'/ingredient/add'}" th:object="${ingredient}" method="get">
+        <button class="btn btn-success">Create a new Ingredient</button>
+    </a>
 
     <hr/>
     <table class="table">
         <thead>
         <tr>
-            <th>Available Ingredients</th>
+            <Center>Available Ingredients</Center>
         </tr>
         </thead>
     </table>
     <form method="post" style="max-width:500px;" th:object="${form}" action="/recipe/add-ingredients">
-        <button type="submit" class="btn btn-success">Add</button>
+        <button type="submit" class="btn btn-success">Add to Recipe</button>
         <div th:each="ingredient : ${ingredients}" class="checkbox">
             <input type="checkbox" name="ingredientIds"
                    th:value="${ingredient.id}" th:id="${ingredient.id}"/>
